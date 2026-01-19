@@ -128,13 +128,13 @@ public class GameManager : MonoBehaviour
 
         // Guardar vida del jugador (si tiene el componente)
         // TODO: Descomentar cuando exista PlayerHealth (D1)
-        /*
+
         var playerHealth = jugador.GetComponent<PlayerHealth>();
         if (playerHealth != null)
         {
             checkpointActual.vidaJugador = playerHealth.vidaActual;
         }
-        */
+
 
         // Guardar inventario (si existe InventoryUI)
         // TODO: Descomentar cuando exista InventoryUI (J2)
@@ -180,13 +180,13 @@ public class GameManager : MonoBehaviour
 
         // Restaurar vida
         // TODO: Descomentar cuando exista PlayerHealth (D1)
-        /*
+       
         var playerHealth = jugador.GetComponent<PlayerHealth>();
         if (playerHealth != null)
         {
             playerHealth.vidaActual = checkpointUltimoGuardado.vidaJugador;
         }
-        */
+       
 
         // Limpiar y restaurar inventario
         // TODO: Descomentar cuando exista InventoryUI (J2)
@@ -224,8 +224,17 @@ public class GameManager : MonoBehaviour
         Debug.Log("[GameManager] Jugador muerto - Preparando para cargar checkpoint");
         CambiarEstado(EstadoJuego.GameOver);
 
-        // Aquí puedes agregar delay antes de cargar
-        Invoke(nameof(CargarCheckpoint), 2f);
+        // Usar corrutina en lugar de Invoke
+        StartCoroutine(RespawnConDelay(2f));
+    }
+
+    /// <summary>
+    /// Corrutina para respawn con delay (funciona con timeScale = 0)
+    /// </summary>
+    private System.Collections.IEnumerator RespawnConDelay(float delay)
+    {
+        yield return new WaitForSecondsRealtime(delay); // ← Usa tiempo REAL, ignora timeScale
+        CargarCheckpoint();
     }
 
     /// <summary>

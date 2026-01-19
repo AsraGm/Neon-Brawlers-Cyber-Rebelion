@@ -132,6 +132,7 @@ GameObject:
   - component: {fileID: 328002134}
   - component: {fileID: 328002133}
   - component: {fileID: 328002132}
+  - component: {fileID: 328002137}
   m_Layer: 0
   m_Name: CHARACTER
   m_TagString: Untagged
@@ -256,6 +257,20 @@ Transform:
   - {fileID: 2102859432}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &328002137
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 328002131}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d206ff49e8d30d40b2d15aa174892c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
+  vidaMaxima: 100
+  vidaActual: 100
 --- !u!1 &957930489
 GameObject:
   m_ObjectHideFlags: 0
