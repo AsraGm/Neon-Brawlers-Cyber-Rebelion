@@ -137,9 +137,10 @@ public class InventoryUIManager : MonoBehaviour
         // Solo procesar inputs si está abierto
         if (!inventarioAbierto) return;
 
-        if (LoreManager.Instance != null && LoreManager.Instance.PanelEstaAbierto())
+        if ((LoreManager.Instance != null && LoreManager.Instance.PanelEstaAbierto()) ||
+         (InspectSystem.Instance != null && InspectSystem.Instance.PanelEstaAbierto()))
         {
-            return; // No permitir navegación ni cambio de tabs
+            return;
         }
 
         // Cambiar de tab
@@ -275,17 +276,24 @@ public class InventoryUIManager : MonoBehaviour
                 {
                     LoreManager.Instance.AbrirPanelLore(item);
                 }
-                else
-                {
-                    Debug.LogWarning("[InventoryUI] LoreManager no existe");
-                }
             }
         }
-        // Si estamos en LLAVES, solo mostrar log (más adelante: inspección 3D)
+
         else if (tabActual == TabActual.LLAVES)
         {
-            Debug.Log($"[InventoryUI] Item seleccionado en LLAVES, índice: {indiceSeleccionado}");
-            // TODO: Abrir ventana de inspección 3D
+            if (indiceSeleccionado < itemsLLAVES.Count)
+            {
+                ItemData item = itemsLLAVES[indiceSeleccionado];
+
+                if (InspectSystem.Instance != null)
+                {
+                    InspectSystem.Instance.AbrirInspector(item);
+                }
+                else
+                {
+                    Debug.LogWarning("[InventoryUI] InspectSystem no existe");
+                }
+            }
         }
     }
     #endregion
@@ -319,9 +327,9 @@ public class InventoryUIManager : MonoBehaviour
 
         Debug.Log($"[InventoryUI] Item agregado: {item.itemID}");
 
-        // Notificar al ObjetivoManager
-        if (ObjetivoManager.Instance != null)
-        ObjetivoManager.Instance.ItemRecolectado(item.itemID);
+        //// Notificar al ObjetivoManager
+        //if (ObjetivoManager.Instance != null)
+        //ObjetivoManager.Instance.ItemRecolectado(item.itemID);
     }
 
     private void ActualizarVisualesLLAVES()

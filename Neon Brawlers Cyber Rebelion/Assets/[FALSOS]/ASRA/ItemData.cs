@@ -1,10 +1,10 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 [CreateAssetMenu(fileName = "Nuevo_Item", menuName = "Inventario/Item Data")]
 public class ItemData : ScriptableObject
 {
-    [Header("Informaci�n General")]
-    [Tooltip("ID �nico del item (ej: tarjeta_roja, bateria_01)")]
+    [Header("Información General")]
+    [Tooltip("ID único del item (ej: tarjeta_roja, bateria_01)")]
     public string itemID;
 
     [Tooltip("Nombre para mostrar en Base de Datos")]
@@ -15,20 +15,25 @@ public class ItemData : ScriptableObject
     public Sprite iconoItem;
 
     [Header("Tipo de Item")]
-    [Tooltip("Selecciona en qu� tab(s) aparece este item")]
+    [Tooltip("Selecciona en qué tab(s) aparece este item")]
     public TipoItem tipo = TipoItem.Item_Normal;
 
-    [Header("Informaci�n Lore (solo para Base de Datos)")]
+    [Header("Información Lore (solo para Base de Datos)")]
     [TextArea(3, 10)]
     [Tooltip("Texto que se muestra al seleccionar en Base de Datos")]
     public string descripcionLore;
 
     [Tooltip("Audio log que se reproduce al seleccionar")]
     public AudioClip audioLore;
+
+    // ✅ NUEVA LÍNEA - AGREGAR ESTO:
+    [Header("Modelo 3D (para inspección)")]
+    [Tooltip("Prefab del modelo 3D para inspección 360°")]
+    public GameObject modelo3D;
 }
 
 public enum TipoItem
 {
     Item_Normal,      // Solo aparece en tab LLAVES
-    Item_Lore,        // Solo aparece en tab BdD
+    Item_Lore         // Solo aparece en tab BdD
 }
