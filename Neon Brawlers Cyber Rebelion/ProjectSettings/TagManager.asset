@@ -7,6 +7,23 @@ TagManager:
   - Assets
   - Lights
   - Interactable
+  - Weapon
+  - Action
+  - Metal
+  - Glass
+  - Ignore Ragdoll
+  - PlayerUI
+  - Enemy
+  - Dirt
+  - CompanionAI
+  - Barrel
+  - Collectable
+  - Wood
+  - Concrete
+  - AutoCrouch
+  - Boss
+  - LadderTrigger
+  - LookAt
   layers:
   - Default
   - TransparentFX
@@ -18,7 +35,7 @@ TagManager:
   - Lights
   - Interactable
   - Enemy
-  - 
+  - whatIsGround
   - 
   - 
   - 
