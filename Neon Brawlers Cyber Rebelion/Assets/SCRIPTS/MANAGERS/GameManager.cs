@@ -630,4 +630,38 @@ public class GameManager : MonoBehaviour
         }
     }
     #endregion
+
+    #region Reseteo
+    public void BorrarCheckpoint()
+    {
+        if (PlayerPrefs.HasKey("CheckpointGuardado"))
+        {
+            PlayerPrefs.DeleteKey("CheckpointGuardado");
+            PlayerPrefs.DeleteKey("CheckpointPosX");
+            PlayerPrefs.DeleteKey("CheckpointPosY");
+            PlayerPrefs.DeleteKey("CheckpointPosZ");
+            PlayerPrefs.DeleteKey("CheckpointRotY");
+            PlayerPrefs.DeleteKey("CheckpointHealth");
+            PlayerPrefs.DeleteKey("CheckpointMisionActual");
+            PlayerPrefs.DeleteKey("CheckpointInventarioJSON");
+            PlayerPrefs.Save();
+
+            Debug.Log("[GameManager] 💾 Checkpoint borrado");
+        }
+        else
+        {
+            Debug.Log("[GameManager] No hay checkpoint guardado para borrar");
+        }
+    }
+
+    /// <summary>
+    /// ✅ Limpia el registro de items recolectados (útil para DevTools)
+    /// </summary>
+    public void LimpiarRegistroItems()
+    {
+        itemsRecolectadosEnEstaPartida.Clear();
+        todosLosItemsDelMundo.Clear();
+        Debug.Log("[GameManager] 🌍 Registro de items recolectados limpiado");
+    }
+    #endregion
 }

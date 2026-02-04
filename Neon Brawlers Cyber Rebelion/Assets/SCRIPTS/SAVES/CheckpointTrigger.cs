@@ -1,9 +1,5 @@
 using UnityEngine;
 
-/// <summary>
-/// Sistema de Checkpoint activado por Trigger
-/// Guarda automáticamente cuando el jugador entra en la zona
-/// </summary>
 [RequireComponent(typeof(BoxCollider))]
 public class CheckpointTrigger : MonoBehaviour
 {
@@ -112,7 +108,6 @@ public class CheckpointTrigger : MonoBehaviour
         }
     }
 
-    // VISUALIZACIÓN EN EDITOR (GIZMOS)
     private void OnDrawGizmos()
     {
         // Dibujar el área del trigger

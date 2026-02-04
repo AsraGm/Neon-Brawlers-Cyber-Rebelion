@@ -2,13 +2,6 @@
 using UnityEngine.UI;
 using TMPro;
 
-/// <summary>
-/// VERSIÓN MEJORADA - InspectSystem con mejor sincronización
-/// Cambios principales:
-/// - Mejor manejo de sincronización con InventoryUIManager
-/// - Validaciones adicionales
-/// - Fix en actualización de highlight al cerrar
-/// </summary>
 public class InspectSystem : MonoBehaviour
 {
     #region Singleton
@@ -84,13 +77,9 @@ public class InspectSystem : MonoBehaviour
             luzModelo.enabled = false;
         }
 
-        // ✅ NUEVO: Validación de componentes
         ValidarComponentes();
     }
 
-    /// <summary>
-    /// ✅ NUEVO: Valida que todos los componentes necesarios estén asignados
-    /// </summary>
     private void ValidarComponentes()
     {
         bool todoCorrecto = true;
@@ -174,10 +163,6 @@ public class InspectSystem : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Abre el inspector con un item del inventario
-    /// ✅ MEJORADO: Mejor validación y manejo de errores
-    /// </summary>
     public void AbrirInspector(ItemData item)
     {
         if (item == null)
@@ -202,7 +187,6 @@ public class InspectSystem : MonoBehaviour
             textoNombreItem.text = item.nombreDisplay;
         }
 
-        // ✅ OCULTAR HIGHLIGHT
         OcultarHighlightInventario();
 
         // Activar cámara y luz
@@ -224,9 +208,6 @@ public class InspectSystem : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// ✅ NUEVO: Método separado para instanciar el modelo (más limpio)
-    /// </summary>
     private void InstanciarModelo(ItemData item)
     {
         if (puntoSpawn == null)
@@ -262,9 +243,6 @@ public class InspectSystem : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// ✅ MEJORADO: Cierre del panel con mejor sincronización
-    /// </summary>
     public void CerrarPanel()
     {
         panelAbierto = false;
@@ -289,7 +267,6 @@ public class InspectSystem : MonoBehaviour
 
         itemActual = null;
 
-        // ✅ REACTIVAR HIGHLIGHT (solo si el inventario está abierto)
         ReactivarHighlightInventario();
 
         if (logsDetallados)
@@ -298,9 +275,6 @@ public class InspectSystem : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// ✅ NUEVO: Método separado para ocultar highlight (más robusto)
-    /// </summary>
     private void OcultarHighlightInventario()
     {
         if (InventoryUIManager.Instance != null && InventoryUIManager.Instance.highlightObject != null)
@@ -314,9 +288,6 @@ public class InspectSystem : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// ✅ NUEVO: Método separado para reactivar highlight (más robusto)
-    /// </summary>
     private void ReactivarHighlightInventario()
     {
         if (InventoryUIManager.Instance != null)
@@ -332,17 +303,11 @@ public class InspectSystem : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Verifica si el panel está abierto (para bloquear navegación)
-    /// </summary>
     public bool PanelEstaAbierto()
     {
         return panelAbierto;
     }
 
-    /// <summary>
-    /// ✅ NUEVO: Método para cambiar configuración de zoom en runtime
-    /// </summary>
     public void ConfigurarZoom(float min, float max, float velocidad)
     {
         zoomMin = min;
@@ -351,9 +316,6 @@ public class InspectSystem : MonoBehaviour
         currentZoom = Mathf.Clamp(currentZoom, zoomMin, zoomMax);
     }
 
-    /// <summary>
-    /// ✅ NUEVO: Resetear zoom a valor por defecto
-    /// </summary>
     public void ResetearZoom()
     {
         currentZoom = 4f;

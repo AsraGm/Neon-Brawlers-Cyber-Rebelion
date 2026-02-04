@@ -1,9 +1,5 @@
 using UnityEngine;
 
-/// <summary>
-/// Sistema de Daño activado por Trigger
-/// Aplica daño al jugador cuando entra/permanece en la zona
-/// </summary>
 [RequireComponent(typeof(BoxCollider))]
 public class DamageTrigger : MonoBehaviour
 {
@@ -197,16 +193,12 @@ public class DamageTrigger : MonoBehaviour
         cantidadDanio = nuevoDanio;
     }
 
-    /// <summary>
-    /// Activar/desactivar la zona de daño
-    /// </summary>
     public void ActivarZona(bool activar)
     {
         enabled = activar;
         triggerCollider.enabled = activar;
     }
 
-    // VISUALIZACIÓN EN EDITOR (GIZMOS)
     private void OnDrawGizmos()
     {
         // Color según el tipo de daño

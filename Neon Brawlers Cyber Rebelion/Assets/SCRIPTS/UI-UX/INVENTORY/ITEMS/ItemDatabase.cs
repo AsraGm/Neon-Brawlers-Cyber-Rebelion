@@ -1,16 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-/// <summary>
-/// ✅ NUEVO: ItemDatabase - Base de datos centralizada de todos los items
-/// Este ScriptableObject contiene referencias a TODOS los ItemData del juego
-/// Permite cargar items por ID para el sistema de guardado/carga
-/// 
-/// CÓMO USAR:
-/// 1. Click derecho en Project > Create > Inventario > Item Database
-/// 2. Arrastra TODOS los ItemData a la lista "todosLosItems"
-/// 3. Asigna este ItemDatabase en InventoryUIManager (Inspector)
-/// </summary>
 [CreateAssetMenu(fileName = "ItemDatabase", menuName = "Inventario/Item Database")]
 public class ItemDatabase : ScriptableObject
 {
@@ -21,14 +11,8 @@ public class ItemDatabase : ScriptableObject
     [Header("=== DEBUG ===")]
     [SerializeField] private bool mostrarLogsDetallados = false;
 
-    /// <summary>
-    /// Diccionario interno para búsqueda rápida (se genera automáticamente)
-    /// </summary>
     private Dictionary<string, ItemData> diccionarioItems;
 
-    /// <summary>
-    /// Inicializa el diccionario (se llama automáticamente al acceder)
-    /// </summary>
     private void InicializarDiccionario()
     {
         if (diccionarioItems != null) return;
@@ -64,14 +48,8 @@ public class ItemDatabase : ScriptableObject
         }
     }
 
-    /// <summary>
-    /// Obtiene un ItemData por su ID
-    /// </summary>
-    /// <param name="itemID">ID único del item</param>
-    /// <returns>ItemData si se encuentra, null si no existe</returns>
     public ItemData ObtenerItemPorID(string itemID)
     {
-        // Inicializar diccionario si es necesario
         InicializarDiccionario();
 
         if (string.IsNullOrEmpty(itemID))
@@ -95,26 +73,17 @@ public class ItemDatabase : ScriptableObject
         }
     }
 
-    /// <summary>
-    /// Verifica si existe un item con el ID dado
-    /// </summary>
     public bool ExisteItem(string itemID)
     {
         InicializarDiccionario();
         return diccionarioItems.ContainsKey(itemID);
     }
 
-    /// <summary>
-    /// Obtiene la lista completa de todos los items
-    /// </summary>
     public List<ItemData> ObtenerTodosLosItems()
     {
         return new List<ItemData>(todosLosItems);
     }
 
-    /// <summary>
-    /// Obtiene todos los items de un tipo específico
-    /// </summary>
     public List<ItemData> ObtenerItemsPorTipo(TipoItem tipo)
     {
         List<ItemData> itemsFiltrados = new List<ItemData>();
@@ -130,17 +99,11 @@ public class ItemDatabase : ScriptableObject
         return itemsFiltrados;
     }
 
-    /// <summary>
-    /// Obtiene la cantidad total de items en la base de datos
-    /// </summary>
     public int ObtenerCantidadTotal()
     {
         return todosLosItems.Count;
     }
 
-    /// <summary>
-    /// Valida la base de datos (útil para debugging)
-    /// </summary>
     [ContextMenu("Validar Base de Datos")]
     public void ValidarBaseDatos()
     {
@@ -187,9 +150,6 @@ public class ItemDatabase : ScriptableObject
         Debug.Log($"[ItemDatabase] Total en lista: {todosLosItems.Count}");
     }
 
-    /// <summary>
-    /// Limpia el diccionario (fuerza reconstrucción)
-    /// </summary>
     [ContextMenu("Limpiar Cache")]
     public void LimpiarCache()
     {

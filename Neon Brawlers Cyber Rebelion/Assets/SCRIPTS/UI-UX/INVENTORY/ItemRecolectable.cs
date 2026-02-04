@@ -1,13 +1,5 @@
 ﻿using UnityEngine;
 
-/// <summary>
-/// ✅ VERSIÓN ACTUALIZADA V3 - ItemRecolectable con sistema completo de restauración
-/// NUEVAS CARACTERÍSTICAS:
-/// - Se registra automáticamente en GameManager al iniciar
-/// - Se desregistra al destruirse
-/// - Soporta restauración física desde checkpoints
-/// - Estado completamente reseteable
-/// </summary>
 public class ItemRecolectable : MonoBehaviour
 {
     [Header("=== DATOS DEL ITEM ===")]
@@ -59,7 +51,6 @@ public class ItemRecolectable : MonoBehaviour
             Debug.LogWarning($"[ItemRecolectable] No se encontró jugador con tag 'Player'. Item: {gameObject.name}");
         }
 
-        // ✅ NUEVO: Registrar este item en el GameManager
         if (GameManager.Instance != null)
         {
             string identificador = ObtenerIdentificadorUnico();
@@ -79,9 +70,6 @@ public class ItemRecolectable : MonoBehaviour
         VerificarEstadoInicial();
     }
 
-    /// <summary>
-    /// ✅ NUEVO: Desregistrar del GameManager al destruirse
-    /// </summary>
     private void OnDestroy()
     {
         if (GameManager.Instance != null)
@@ -96,9 +84,6 @@ public class ItemRecolectable : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Verifica si este item ya fue recolectado previamente
-    /// </summary>
     private void VerificarEstadoInicial()
     {
         if (GameManager.Instance == null) return;
@@ -146,7 +131,6 @@ public class ItemRecolectable : MonoBehaviour
     {
         yaRecolectado = true;
 
-        // ✅ Registrar con GameManager ANTES de agregar al inventario
         if (GameManager.Instance != null)
         {
             GameManager.Instance.RegistrarItemRecolectado(itemData.itemID, gameObject.name);
@@ -167,10 +151,6 @@ public class ItemRecolectable : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    /// <summary>
-    /// Obtiene el identificador único del item
-    /// Formato: "itemID_NombreGameObject"
-    /// </summary>
     public string ObtenerIdentificadorUnico()
     {
         if (itemData == null)
@@ -182,10 +162,6 @@ public class ItemRecolectable : MonoBehaviour
         return $"{itemData.itemID}_{gameObject.name}";
     }
 
-    /// <summary>
-    /// ✅ Resetea el estado del item (usado por GameManager al restaurar checkpoint)
-    /// DEBE SER PÚBLICO para que GameManager pueda llamarlo
-    /// </summary>
     public void ResetearEstado()
     {
         yaRecolectado = false;
@@ -197,9 +173,6 @@ public class ItemRecolectable : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Método para reactivar el item manualmente (útil para debugging)
-    /// </summary>
     [ContextMenu("Reactivar Item (DEBUG)")]
     public void Reactivar()
     {
@@ -213,9 +186,6 @@ public class ItemRecolectable : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Método para cambiar el ItemData en runtime
-    /// </summary>
     public void EstablecerItemData(ItemData nuevoItem)
     {
         if (nuevoItem == null)
@@ -232,23 +202,16 @@ public class ItemRecolectable : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Obtiene el ItemData actual (útil para debugging)
-    /// </summary>
     public ItemData ObtenerItemData()
     {
         return itemData;
     }
 
-    /// <summary>
-    /// Verifica si el item ya fue recolectado
-    /// </summary>
     public bool EstaRecolectado()
     {
         return yaRecolectado;
     }
 
-    // VISUALIZACIÓN EN EDITOR Y GAME
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = jugadorCerca ? Color.green : Color.yellow;
@@ -274,9 +237,6 @@ public class ItemRecolectable : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Validación completa en tiempo de ejecución
-    /// </summary>
     [ContextMenu("Validar Configuración")]
     private void ValidarConfiguracion()
     {
@@ -348,9 +308,6 @@ public class ItemRecolectable : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Muestra información detallada del item
-    /// </summary>
     [ContextMenu("Mostrar Info Detallada")]
     private void MostrarInfoDetallada()
     {

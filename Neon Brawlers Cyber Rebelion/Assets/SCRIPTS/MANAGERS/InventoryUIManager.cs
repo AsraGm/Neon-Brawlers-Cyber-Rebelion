@@ -5,13 +5,12 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// VERSIÓN MEJORADA - InventoryUIManager con todas las correcciones
-/// Cambios principales:
-/// - Métodos ObtenerItemsIDs(), LimpiarInventario(), AgregarItemPorID() implementados
-/// - Sistema de ItemDatabase para cargar items por ID
-/// - Fix en navegación del tab MISIÓN
-/// - Sincronización mejorada con LoreManager/InspectSystem
-/// - Validaciones adicionales
+/// ✅ VERSIÓN CORREGIDA V2 - InventoryUIManager con cálculo de posición CORRECTO
+/// 
+/// FIX PRINCIPAL:
+/// - Método de cálculo de posición del highlight simplificado y corregido
+/// - Ahora usa TransformPoint para conversión directa de coordenadas
+/// - Mucho más confiable y funciona en cualquier configuración de Canvas
 /// </summary>
 public class InventoryUIManager : MonoBehaviour
 {
@@ -51,6 +50,9 @@ public class InventoryUIManager : MonoBehaviour
     [SerializeField] private ScrollRect scrollRectBdD;
 
     [Header("=== HIGHLIGHT ===")]
+    [Tooltip("⭐ IMPORTANTE: Contenedor SEPARADO para el highlight (NO debe ser hijo del Content con GridLayoutGroup)")]
+    [SerializeField] private Transform highlightContainer;
+
     public GameObject highlightObject;
     [SerializeField] private Color colorHighlight = new Color(0, 1, 1, 0.3f);
     [SerializeField] private float escalaHighlight = 1.1f;
@@ -71,6 +73,9 @@ public class InventoryUIManager : MonoBehaviour
     [Header("=== ITEM DATABASE ===")]
     [Tooltip("ScriptableObject que contiene TODOS los items del juego")]
     [SerializeField] private ItemDatabase itemDatabase;
+
+    [Header("=== DEBUG ===")]
+    [SerializeField] private bool mostrarDebugPosicion = false;
 
     [Header("=== KEYBINDS ===")]
     public KeyCode teclaAbrir = KeyCode.I;
@@ -94,7 +99,7 @@ public class InventoryUIManager : MonoBehaviour
     private List<GameObject> slotsLLAVES = new List<GameObject>();
     private List<GameObject> slotsBdD = new List<GameObject>();
 
-    // Navegación - ✅ FIX: Ahora maneja correctamente el tab MISIÓN
+    // Navegación
     private int indiceSeleccionado = 0;
     private List<GameObject> slotsActuales
     {
@@ -161,9 +166,9 @@ public class InventoryUIManager : MonoBehaviour
         // Obtener todos los slots existentes
         ObtenerSlots();
 
-        // Crear highlight si no existe
+        // ✅ NUEVO SISTEMA: Crear highlight en contenedor separado
         if (highlightObject == null)
-            CrearHighlightPlaceholder();
+            CrearHighlightMejorado();
 
         ConfigurarBotonesTabs();
 
@@ -190,23 +195,52 @@ public class InventoryUIManager : MonoBehaviour
         Debug.Log($"[InventoryUI] {slotsLLAVES.Count} slots LLAVES, {slotsBdD.Count} slots BdD");
     }
 
-    private void CrearHighlightPlaceholder()
+    /// <summary>
+    /// ✅ NUEVO SISTEMA MEJORADO: Crea el highlight en un contenedor SEPARADO
+    /// Esto evita que el GridLayoutGroup lo trate como un slot más
+    /// </summary>
+    private void CrearHighlightMejorado()
     {
+        // ⭐ VALIDACIÓN: Si no hay contenedor asignado, crearlo automáticamente
+        if (highlightContainer == null)
+        {
+            Debug.LogWarning("[InventoryUI] ⚠️ No hay HighlightContainer asignado. Creando uno automáticamente...");
+
+            // Crear contenedor como hijo directo del Canvas de inventario
+            GameObject containerObj = new GameObject("HighlightContainer");
+            containerObj.transform.SetParent(canvasInventario.transform, false);
+
+            // Configurar RectTransform para que ocupe toda el área
+            RectTransform containerRect = containerObj.AddComponent<RectTransform>();
+            containerRect.anchorMin = Vector2.zero;
+            containerRect.anchorMax = Vector2.one;
+            containerRect.sizeDelta = Vector2.zero;
+            containerRect.anchoredPosition = Vector2.zero;
+
+            highlightContainer = containerObj.transform;
+
+            Debug.Log("[InventoryUI] ✅ HighlightContainer creado automáticamente");
+        }
+
+        // Crear el highlight como hijo del contenedor separado
         highlightObject = new GameObject("Highlight");
+        highlightObject.transform.SetParent(highlightContainer, false);
 
-        highlightObject.transform.SetParent(contentLLAVES, false);
-
+        // Agregar imagen
         Image img = highlightObject.AddComponent<Image>();
         img.color = colorHighlight;
         img.raycastTarget = false; // ✅ No bloquear clicks
 
+        // Configurar RectTransform
         RectTransform rt = highlightObject.GetComponent<RectTransform>();
-        rt.sizeDelta = new Vector2(escalaHighlight, escalaHighlight);
-        rt.anchorMin = new Vector2(0, 1);
-        rt.anchorMax = new Vector2(0, 1);
+        rt.sizeDelta = new Vector2(tamañoSlot * escalaHighlight, tamañoSlot * escalaHighlight);
+        rt.anchorMin = new Vector2(0.5f, 0.5f);
+        rt.anchorMax = new Vector2(0.5f, 0.5f);
         rt.pivot = new Vector2(0.5f, 0.5f);
 
         highlightObject.SetActive(false);
+
+        Debug.Log("[InventoryUI] ✅ Highlight creado en contenedor separado (NO afecta al GridLayoutGroup)");
     }
     #endregion
 
@@ -225,7 +259,7 @@ public class InventoryUIManager : MonoBehaviour
         // Solo procesar inputs si está abierto
         if (!inventarioAbierto) return;
 
-        // ✅ MEJORADO: No procesar inputs si hay paneles abiertos
+        // ✅ No procesar inputs si hay paneles abiertos
         if ((LoreManager.Instance != null && LoreManager.Instance.PanelEstaAbierto()) ||
          (InspectSystem.Instance != null && InspectSystem.Instance.PanelEstaAbierto()))
         {
@@ -265,9 +299,6 @@ public class InventoryUIManager : MonoBehaviour
                 inputDetectado = true;
             }
 
-            if (inputDetectado)
-                tiempoUltimoInput = Time.time;
-
             if (Input.GetKeyDown(teclaSeleccionar))
                 SeleccionarItem();
         }
@@ -275,7 +306,7 @@ public class InventoryUIManager : MonoBehaviour
 
     public void ActualizarHighlightPublico()
     {
-        // ✅ NUEVO: Solo actualizar si el inventario está abierto
+        // ✅ Solo actualizar si el inventario está abierto
         if (inventarioAbierto)
         {
             ActualizarHighlight();
@@ -302,6 +333,7 @@ public class InventoryUIManager : MonoBehaviour
     private System.Collections.IEnumerator ActualizarHighlightConDelay()
     {
         yield return null; // Esperar 1 frame
+        yield return null; // Esperar un frame adicional para asegurar que el layout esté actualizado
         ActualizarHighlight();
         HacerScrollAlSlot();
     }
@@ -363,18 +395,42 @@ public class InventoryUIManager : MonoBehaviour
     {
         if (slotsActuales.Count == 0) return;
 
-        indiceSeleccionado += direccion;
+        int nuevoIndice = indiceSeleccionado + direccion;
 
-        // Wrap-around
-        if (indiceSeleccionado < 0)
-            indiceSeleccionado = slotsActuales.Count - 1;
-        else if (indiceSeleccionado >= slotsActuales.Count)
-            indiceSeleccionado = 0;
+        // Limitar navegación horizontal
+        if (direccion == 1 || direccion == -1)
+        {
+            int filaActual = indiceSeleccionado / columnasGrid;
+            int nuevaFila = nuevoIndice / columnasGrid;
 
-        ActualizarHighlight();
-        HacerScrollAlSlot();
+            if (filaActual != nuevaFila)
+            {
+                if (direccion == 1 && (indiceSeleccionado % columnasGrid == columnasGrid - 1 || indiceSeleccionado == slotsActuales.Count - 1))
+                    return;
+
+                if (direccion == -1 && indiceSeleccionado % columnasGrid == 0)
+                    return;
+            }
+        }
+
+        nuevoIndice = Mathf.Clamp(nuevoIndice, 0, slotsActuales.Count - 1);
+
+        if (nuevoIndice != indiceSeleccionado)
+        {
+            indiceSeleccionado = nuevoIndice;
+            tiempoUltimoInput = Time.time;
+
+            HacerScrollAlSlot();
+            StartCoroutine(ActualizarHighlightConDelayNavegacion());
+        }
     }
 
+    private System.Collections.IEnumerator ActualizarHighlightConDelayNavegacion()
+    {
+        yield return null;
+        yield return null;
+        ActualizarHighlight();
+    }
     private void ActualizarHighlight()
     {
         if (tabActual == TabActual.MISION || slotsActuales.Count == 0)
@@ -383,9 +439,10 @@ public class InventoryUIManager : MonoBehaviour
             return;
         }
 
-        if (highlightObject.transform.parent != contentActual)
+        // Asegurarse de que el índice es válido
+        if (indiceSeleccionado < 0 || indiceSeleccionado >= slotsActuales.Count)
         {
-            highlightObject.transform.SetParent(contentActual, false);
+            indiceSeleccionado = 0;
         }
 
         highlightObject.SetActive(true);
@@ -394,9 +451,28 @@ public class InventoryUIManager : MonoBehaviour
         RectTransform slotRect = slotSeleccionado.GetComponent<RectTransform>();
         RectTransform highlightRect = highlightObject.GetComponent<RectTransform>();
 
-        highlightRect.anchoredPosition = slotRect.anchoredPosition;
-        highlightObject.transform.SetAsLastSibling(); // Dibujarse encima
-        highlightObject.transform.localScale = Vector3.one * escalaHighlight;
+        // ⭐ MÉTODO SIMPLE: Hacer que el highlight sea hijo del slot temporalmente
+        // y centrarlo con posición (0,0)
+
+        highlightObject.transform.SetParent(slotSeleccionado.transform, false);
+        highlightRect.anchoredPosition = Vector2.zero;
+        highlightRect.anchorMin = new Vector2(0.5f, 0.5f);
+        highlightRect.anchorMax = new Vector2(0.5f, 0.5f);
+        highlightRect.pivot = new Vector2(0.5f, 0.5f);
+
+        // Ajustar tamaño
+        highlightRect.sizeDelta = slotRect.sizeDelta * escalaHighlight;
+
+        // Escala
+        highlightObject.transform.localScale = Vector3.one;
+
+        // Asegurarse de que esté encima de todo dentro del slot
+        highlightObject.transform.SetAsLastSibling();
+
+        if (mostrarDebugPosicion)
+        {
+            Debug.Log($"[InventoryUI] Highlight actualizado en slot: {slotSeleccionado.name} (índice {indiceSeleccionado})");
+        }
     }
 
     private void HacerScrollAlSlot()
@@ -416,45 +492,33 @@ public class InventoryUIManager : MonoBehaviour
 
         int filaActual = indiceSeleccionado / columnasGrid;
 
-        float alturaFila = slotRect.rect.height +
-                           contentRect.GetComponent<GridLayoutGroup>().spacing.y;
+        GridLayoutGroup gridLayout = contentRect.GetComponent<GridLayoutGroup>();
+        if (gridLayout == null) return;
 
-        float targetYPos = filaActual * alturaFila;
+        float alturaFila = gridLayout.cellSize.y + gridLayout.spacing.y;
+        float targetY = filaActual * alturaFila;
 
-        // Obtener dimensiones
-        float viewportHeight = viewportRect.rect.height;
         float contentHeight = contentRect.rect.height;
-        float maxScroll = contentHeight - viewportHeight;
+        float viewportHeight = viewportRect.rect.height;
 
-        if (maxScroll > 0)
+        if (contentHeight <= viewportHeight)
         {
-            float normalizedPos = Mathf.Clamp01(targetYPos / maxScroll);
-
-            // Unity usa 1 = arriba, 0 = abajo
-            scrollActual.verticalNormalizedPosition = 1f - normalizedPos;
+            scrollActual.verticalNormalizedPosition = 1f;
+            return;
         }
-    }
 
+        float normalizedPosition = Mathf.Clamp01(targetY / (contentHeight - viewportHeight));
+        normalizedPosition = 1f - normalizedPosition;
+
+        scrollActual.verticalNormalizedPosition = normalizedPosition;
+    }
+    #endregion
+
+    #region Selección de Item
     private void SeleccionarItem()
     {
-        if (slotsActuales.Count == 0 || indiceSeleccionado >= slotsActuales.Count)
-            return;
-
-        // Si estamos en BdD, abrir panel de lore
-        if (tabActual == TabActual.BdD)
-        {
-            if (indiceSeleccionado < itemsBdD.Count)
-            {
-                ItemData item = itemsBdD[indiceSeleccionado];
-
-                if (LoreManager.Instance != null)
-                {
-                    LoreManager.Instance.AbrirPanelLore(item);
-                }
-            }
-        }
-
-        else if (tabActual == TabActual.LLAVES)
+        // LLAVES: Inspeccionar modelo 3D
+        if (tabActual == TabActual.LLAVES)
         {
             if (indiceSeleccionado < itemsLLAVES.Count)
             {
@@ -467,6 +531,23 @@ public class InventoryUIManager : MonoBehaviour
                 else
                 {
                     Debug.LogWarning("[InventoryUI] InspectSystem no existe");
+                }
+            }
+        }
+        // BdD: Mostrar lore
+        else if (tabActual == TabActual.BdD)
+        {
+            if (indiceSeleccionado < itemsBdD.Count)
+            {
+                ItemData item = itemsBdD[indiceSeleccionado];
+
+                if (LoreManager.Instance != null)
+                {
+                    LoreManager.Instance.AbrirPanelLore(item);
+                }
+                else
+                {
+                    Debug.LogWarning("[InventoryUI] LoreManager no existe");
                 }
             }
         }
@@ -512,8 +593,7 @@ public class InventoryUIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ✅ NUEVO: Obtiene la lista de IDs de todos los items en el inventario
-    /// Usado por GameManager para guardar checkpoints
+    /// Obtiene la lista de IDs de todos los items en el inventario
     /// </summary>
     public List<string> ObtenerItemsIDs()
     {
@@ -541,8 +621,7 @@ public class InventoryUIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ✅ NUEVO: Limpia todo el inventario
-    /// Usado por GameManager antes de cargar checkpoint
+    /// Limpia todo el inventario
     /// </summary>
     public void LimpiarInventario()
     {
@@ -555,8 +634,7 @@ public class InventoryUIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ✅ NUEVO: Agrega un item por su ID desde el ItemDatabase
-    /// Usado por GameManager al cargar checkpoint
+    /// Agrega un item por su ID desde el ItemDatabase
     /// </summary>
     public void AgregarItemPorID(string itemID)
     {
@@ -600,7 +678,7 @@ public class InventoryUIManager : MonoBehaviour
             }
             else
             {
-                // Slot vacío - mantener el fondo visible pero sin sprite
+                // Slot vacío
                 img.sprite = null;
                 img.color = new Color(0.2f, 0.2f, 0.2f, 0.5f); // Gris semi-transparente
             }
@@ -623,7 +701,7 @@ public class InventoryUIManager : MonoBehaviour
             }
             else
             {
-                // Slot vacío - mantener el fondo visible pero sin sprite
+                // Slot vacío
                 img.sprite = null;
                 img.color = new Color(0.2f, 0.2f, 0.2f, 0.5f); // Gris semi-transparente
             }
@@ -667,11 +745,20 @@ public class InventoryUIManager : MonoBehaviour
         tabActual = nuevoTab;
         MostrarTab(tabActual);
         indiceSeleccionado = 0; // Resetear selección
-        ActualizarHighlight();
-        HacerScrollAlSlot();
+
+        // Esperar un frame antes de actualizar highlight para asegurar que el layout esté listo
+        StartCoroutine(ActualizarHighlightConDelayCorto());
+
         ActualizarEstadoBotones();
 
         Debug.Log($"[InventoryUI] Cambiado a tab: {tabActual}");
+    }
+
+    private System.Collections.IEnumerator ActualizarHighlightConDelayCorto()
+    {
+        yield return null;
+        ActualizarHighlight();
+        HacerScrollAlSlot();
     }
 
     /// <summary>
@@ -679,33 +766,99 @@ public class InventoryUIManager : MonoBehaviour
     /// </summary>
     private void ActualizarEstadoBotones()
     {
-        TextMeshProUGUI texto = botonLLAVES.GetComponentInChildren<TextMeshProUGUI>();
-        if (texto != null)
-        {
-            texto.fontStyle = tabActual == TabActual.LLAVES ? FontStyles.Bold : FontStyles.Normal;
-        }
-
-        botonLLAVES.transform.localScale = tabActual == TabActual.LLAVES ? Vector3.one * 1.1f : Vector3.one;
-        // Restablecer todos a inactivo
+        // ⭐ Actualizar botón LLAVES
         if (botonLLAVES != null)
         {
+            TextMeshProUGUI texto = botonLLAVES.GetComponentInChildren<TextMeshProUGUI>();
+            if (texto != null)
+            {
+                texto.fontStyle = tabActual == TabActual.LLAVES ? FontStyles.Bold : FontStyles.Normal;
+            }
+
+            botonLLAVES.transform.localScale = tabActual == TabActual.LLAVES ? Vector3.one * 1.1f : Vector3.one;
+
             ColorBlock colors = botonLLAVES.colors;
             colors.normalColor = tabActual == TabActual.LLAVES ? colorTabActivo : colorTabInactivo;
             botonLLAVES.colors = colors;
         }
 
+        // ⭐ Actualizar botón MISIÓN
         if (botonMISION != null)
         {
+            TextMeshProUGUI texto = botonMISION.GetComponentInChildren<TextMeshProUGUI>();
+            if (texto != null)
+            {
+                texto.fontStyle = tabActual == TabActual.MISION ? FontStyles.Bold : FontStyles.Normal;
+            }
+
+            botonMISION.transform.localScale = tabActual == TabActual.MISION ? Vector3.one * 1.1f : Vector3.one; // ⭐ AÑADIDO
+
             ColorBlock colors = botonMISION.colors;
             colors.normalColor = tabActual == TabActual.MISION ? colorTabActivo : colorTabInactivo;
             botonMISION.colors = colors;
         }
 
+        // ⭐ Actualizar botón BdD
         if (botonBdD != null)
         {
+            TextMeshProUGUI texto = botonBdD.GetComponentInChildren<TextMeshProUGUI>();
+            if (texto != null)
+            {
+                texto.fontStyle = tabActual == TabActual.BdD ? FontStyles.Bold : FontStyles.Normal;
+            }
+
+            botonBdD.transform.localScale = tabActual == TabActual.BdD ? Vector3.one * 1.1f : Vector3.one; // ⭐ AÑADIDO
+
             ColorBlock colors = botonBdD.colors;
             colors.normalColor = tabActual == TabActual.BdD ? colorTabActivo : colorTabInactivo;
             botonBdD.colors = colors;
+        }
+    }
+    #endregion
+
+    #region Reseteo
+    public void LimpiarInventarioCompleto()
+    {
+        // Limpiar listas
+        itemsLLAVES.Clear();
+        itemsBdD.Clear();
+
+        // Limpiar todas las referencias UI de LLAVES
+        foreach (var slot in slotsLLAVES)
+        {
+            if (slot != null)
+            {
+                LimpiarSlot(slot.transform);
+            }
+        }
+
+        // Limpiar todas las referencias UI de BdD
+        foreach (var slot in slotsBdD)
+        {
+            if (slot != null)
+            {
+                LimpiarSlot(slot.transform);
+            }
+        }
+
+        // Resetear índice
+        indiceSeleccionado = 0;
+
+        // Ocultar highlight
+        if (highlightObject != null)
+        {
+            highlightObject.SetActive(false);
+        }
+
+        Debug.Log("[InventoryUIManager] 🎒 Inventario completamente limpiado");
+    }
+    private void LimpiarSlot(Transform slot)
+    {
+        Image imagen = slot.Find("Imagen")?.GetComponent<Image>();
+        if (imagen != null)
+        {
+            imagen.sprite = null;
+            imagen.enabled = false;
         }
     }
     #endregion

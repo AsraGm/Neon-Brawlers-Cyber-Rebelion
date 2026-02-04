@@ -2,11 +2,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-/// <summary>
-/// ✅ VERSIÓN COMPATIBLE - Sistema de Salud del Jugador
-/// Compatible con GameManager actualizado
-/// Incluye todos los métodos necesarios para checkpoints
-/// </summary>
 public class PlayerHealth : MonoBehaviour
 {
     [Header("=== VIDA ===")]
@@ -50,9 +45,6 @@ public class PlayerHealth : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Aplica daño al jugador
-    /// </summary>
     public void RecibirDanio(float cantidad)
     {
         if (estaMuerto) return;
@@ -84,9 +76,6 @@ public class PlayerHealth : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Cura al jugador
-    /// </summary>
     public void Curar(float cantidad)
     {
         if (estaMuerto) return;
@@ -102,10 +91,6 @@ public class PlayerHealth : MonoBehaviour
         ActualizarUI();
     }
 
-    /// <summary>
-    /// ✅ MÉTODO REQUERIDO POR GAMEMANAGER
-    /// Establece la vida a un valor específico (usado por checkpoints)
-    /// </summary>
     public void EstablecerVida(float nuevaVida, float nuevaVidaMaxima)
     {
         vidaMaxima = nuevaVidaMaxima;
@@ -120,10 +105,6 @@ public class PlayerHealth : MonoBehaviour
         ActualizarUI();
     }
 
-    /// <summary>
-    /// ✅ MÉTODO REQUERIDO POR GAMEMANAGER
-    /// Resetea el estado de muerte (usado al cargar checkpoint)
-    /// </summary>
     public void ResetearEstadoMuerte()
     {
         estaMuerto = false;
@@ -134,9 +115,6 @@ public class PlayerHealth : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Maneja la muerte del jugador
-    /// </summary>
     private void Morir()
     {
         if (estaMuerto) return;
@@ -166,9 +144,6 @@ public class PlayerHealth : MonoBehaviour
         Invoke(nameof(CargarCheckpoint), tiempoEsperaAntesDeCargarCheckpoint);
     }
 
-    /// <summary>
-    /// Carga el último checkpoint guardado
-    /// </summary>
     private void CargarCheckpoint()
     {
         if (GameManager.Instance != null)
@@ -181,9 +156,6 @@ public class PlayerHealth : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Reproduce efectos de daño
-    /// </summary>
     private void ReproducirEfectosDanio()
     {
         // Audio
@@ -199,9 +171,6 @@ public class PlayerHealth : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Actualiza la UI de vida
-    /// </summary>
     private void ActualizarUI()
     {
         // Actualizar barra de vida
@@ -218,9 +187,6 @@ public class PlayerHealth : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Establece la vida máxima (útil para power-ups)
-    /// </summary>
     public void EstablecerVidaMaxima(float nuevaVidaMaxima)
     {
         vidaMaxima = nuevaVidaMaxima;
@@ -233,25 +199,16 @@ public class PlayerHealth : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Obtiene el porcentaje de vida actual (0-1)
-    /// </summary>
     public float ObtenerPorcentajeVida()
     {
         return vidaActual / vidaMaxima;
     }
 
-    /// <summary>
-    /// Verifica si el jugador está vivo
-    /// </summary>
     public bool EstaVivo()
     {
         return vidaActual > 0 && !estaMuerto;
     }
 
-    // ============================================
-    // MÉTODOS DE DEBUG (Solo en Editor)
-    // ============================================
 #if UNITY_EDITOR
     private void Update()
     {
