@@ -7,7 +7,17 @@ public class ObstacleInteraction : MonoBehaviour
     public Transform snapPoint;         // punto donde se pega el player
 
     [Header("Ajustes")]
-    public float snapSpeed = 10f;
+    public float snapSpeed = 5f;
+
+    // variable para saber si el jugador esta o no
+    public bool PlayerInObstacle { get; private set; }
+    EnemyInteraction enemyInteraction;
+
+    // agarrar al script de enemyinteraction cuando inicia
+    private void Awake()
+    {
+        enemyInteraction = GetComponent<EnemyInteraction>();
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -27,14 +37,10 @@ public class ObstacleInteraction : MonoBehaviour
         EnterObstacle(player, cam);
     }
 
-    void EnterObstacle(PlayerMovement player, ThirdPersonCam cam)
-    {
-        player.EnterObstacleMode(snapPoint, snapSpeed);
-        cam.EnterObstacleMode(obstacleLookAt);
-    }
-
     private void OnTriggerExit(Collider other)
     {
+        Debug.Log("Trigger exit: " + other.name);
+
         if (!other.CompareTag("Player")) return;
 
         PlayerMovement player = other.GetComponentInParent<PlayerMovement>();
@@ -45,10 +51,23 @@ public class ObstacleInteraction : MonoBehaviour
         ExitObstacle(player, cam);
     }
 
+    void EnterObstacle(PlayerMovement player, ThirdPersonCam cam)
+    {
+        PlayerInObstacle = true;    
+
+        player.EnterObstacleMode(snapPoint, snapSpeed);
+        cam.EnterObstacleMode(obstacleLookAt);
+    }
+
     void ExitObstacle(PlayerMovement player, ThirdPersonCam cam)
     {
+        PlayerInObstacle = false;
+
+        if (enemyInteraction != null)
+            enemyInteraction.ForceCancel();
+
         player.ExitObstacleMode();
-        cam.ExitObstacleMode();
+        cam.ForceReturnToPlayer();
     }
 
 

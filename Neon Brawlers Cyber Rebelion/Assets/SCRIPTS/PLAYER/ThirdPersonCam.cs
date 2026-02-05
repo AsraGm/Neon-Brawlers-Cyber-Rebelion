@@ -33,6 +33,8 @@ public class ThirdPersonCam : MonoBehaviour
 
     bool inObstacle;
 
+    Transform obstacleFollowCached;
+
     // variable del valor del FOV
     float targetFOV;
 
@@ -115,11 +117,37 @@ public class ThirdPersonCam : MonoBehaviour
         
     }
 
+    public void SetCustomFollow(Transform followTarget, float fov)
+    {
+        obstacleFollowCached = cinemachineCam.Follow;
+        cinemachineCam.Follow = followTarget;
+        targetFOV = fov;
+    }
+
+    public void ReturnToObstacleFollow()
+    {
+        if (!inObstacle) return;
+
+        cinemachineCam.Follow = obstacleFollowCached;
+        targetFOV = normalFOV;
+    }
+
+    public void ForceReturnToPlayer()
+    {
+        Debug.Log("FORZANDO CAMARA AL PLAYER");
+        inObstacle = false;
+        isZooming = false;
+
+        cinemachineCam.Follow = normalFollow;
+        targetFOV = normalFOV;
+    }
+
     public void EnterObstacleMode(Transform obstacleFollowTarget)
     {
         inObstacle = true;
         isZooming = false;
 
+        obstacleFollowCached = obstacleFollowTarget;
         cinemachineCam.Follow = obstacleFollowTarget;
         targetFOV = normalFOV;
     }
