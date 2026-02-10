@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using Unity.Cinemachine;
 
+
 public class ThirdPersonCam : MonoBehaviour
 {
     // Las variables que referencian a cosas de unity como el jugador, camara y rigidbody
@@ -20,10 +21,17 @@ public class ThirdPersonCam : MonoBehaviour
     public Transform obstacleFollow;
 
     [Header("Cinemachine")]
-    public CinemachineCamera cinemachineCam;
+    public CinemachineCamera cinemachineCam; // asignada en el Inspector
+    private CinemachineBasicMultiChannelPerlin perlinNoise;
 
     [Header("Zoom de inspección")]
     public float zoomFOV = 20f;
+
+    [Header("Shake al correr (Cinemachine)")]
+    public float runShakeAmplitude = 1.2f;
+    public float runShakeFrequency = 2f;
+
+    bool isRunning;
 
     bool isZooming;
 
@@ -46,10 +54,25 @@ public class ThirdPersonCam : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-
         targetFOV = normalFOV;
 
         cinemachineCam.Follow = normalFollow;
+
+        // obtenemos el componente Noise de la Virtual Camera
+        perlinNoise = cinemachineCam
+            .GetCinemachineComponent(CinemachineCore.Stage.Noise)
+            as CinemachineBasicMultiChannelPerlin;
+
+
+        if (perlinNoise == null)
+            Debug.LogWarning("No se encontró CinemachineBasicMultiChannelPerlin en la cámara");
+        else
+        {
+            // apagamos el shake al inicio
+            perlinNoise.AmplitudeGain = 0f;
+            perlinNoise.FrequencyGain = 0f;
+        }
+
 
     }
     private void Update()
@@ -167,8 +190,25 @@ public class ThirdPersonCam : MonoBehaviour
         // regresa el bool de is zooming para no entrar en conflicto
         if (isZooming) return;
 
-        targetFOV = running ? runFOV : normalFOV;
-    }
+        if (isRunning == running) return; // evita spam
 
+
+        isRunning = running;
+
+        targetFOV = running ? runFOV : normalFOV;
+
+        if (perlinNoise == null) return;
+
+        if (running)
+        {
+            perlinNoise.AmplitudeGain = runShakeAmplitude;
+            perlinNoise.FrequencyGain = runShakeFrequency;
+        }
+        else
+        {
+            perlinNoise.AmplitudeGain = 0f;
+            perlinNoise.FrequencyGain = 0f;
+        }
+    }
 
 }

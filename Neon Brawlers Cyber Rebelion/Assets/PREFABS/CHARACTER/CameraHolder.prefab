@@ -242,6 +242,8 @@ MonoBehaviour:
   obstacleFollow: {fileID: 0}
   cinemachineCam: {fileID: 1088153594477705766}
   zoomFOV: 20
+  runShakeAmplitude: 2
+  runShakeFrequency: 2
   normalFOV: 60
   runFOV: 90
   fovSpeed: 8
@@ -276,6 +278,7 @@ GameObject:
   - component: {fileID: 247790847632942964}
   - component: {fileID: 1202289808167541761}
   - component: {fileID: 7328543035091600970}
+  - component: {fileID: 6996397334157477327}
   m_Layer: 0
   m_Name: FreeLook Camera Basic
   m_TagString: Untagged
@@ -508,6 +511,23 @@ MonoBehaviour:
         DecelTime: 0
   PlayerIndex: -1
   AutoEnableInputs: 1
+--- !u!114 &6996397334157477327
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7169187624822612755}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68bb026fafb42b14791938953eaace77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineBasicMultiChannelPerlin
+  NoiseProfile: {fileID: 11400000, guid: 69ce8388f6785dd4c8c39915efece2f4, type: 2}
+  PivotOffset: {x: 0, y: 0, z: 0}
+  AmplitudeGain: 1
+  FrequencyGain: 1
+  m_NoiseOffsets: {x: 945.0819, y: -378.92065, z: 117.32114}
 --- !u!1 &8217058977292921969
 GameObject:
   m_ObjectHideFlags: 0

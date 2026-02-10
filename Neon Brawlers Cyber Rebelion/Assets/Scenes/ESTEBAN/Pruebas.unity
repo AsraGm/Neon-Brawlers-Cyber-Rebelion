@@ -560,11 +560,11 @@ PrefabInstance:
       objectReference: {fileID: 1374720784}
     - target: {fileID: 8017888188363370851, guid: 277ce1b09b728a44fb9e6ff5a16ca335, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -2.660016
+      value: -2.66
       objectReference: {fileID: 0}
     - target: {fileID: 8017888188363370851, guid: 277ce1b09b728a44fb9e6ff5a16ca335, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.1237178
+      value: 0.46
       objectReference: {fileID: 0}
     - target: {fileID: 8017888188363370851, guid: 277ce1b09b728a44fb9e6ff5a16ca335, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1023,17 +1023,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1745594919 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1088153594477705766, guid: e196c46cdf7d7c04ba01e9e50bccb76a, type: 3}
-  m_PrefabInstance: {fileID: 1901533131}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f9dfa5b682dcd46bda6128250e975f58, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineCamera
 --- !u!1 &1863284012
 GameObject:
   m_ObjectHideFlags: 0
@@ -1074,25 +1063,9 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1088153594477705766, guid: e196c46cdf7d7c04ba01e9e50bccb76a, type: 3}
-      propertyPath: Lens.FieldOfView
-      value: 60
-      objectReference: {fileID: 0}
-    - target: {fileID: 1088153594477705766, guid: e196c46cdf7d7c04ba01e9e50bccb76a, type: 3}
       propertyPath: Target.TrackingTarget
       value: 
       objectReference: {fileID: 823524952}
-    - target: {fileID: 2068088487169013839, guid: e196c46cdf7d7c04ba01e9e50bccb76a, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 1.5902286
-      objectReference: {fileID: 0}
-    - target: {fileID: 2068088487169013839, guid: e196c46cdf7d7c04ba01e9e50bccb76a, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 3.170001
-      objectReference: {fileID: 0}
-    - target: {fileID: 2068088487169013839, guid: e196c46cdf7d7c04ba01e9e50bccb76a, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -4.251808
-      objectReference: {fileID: 0}
     - target: {fileID: 2461359665756353334, guid: e196c46cdf7d7c04ba01e9e50bccb76a, type: 3}
       propertyPath: rb
       value: 
@@ -1118,36 +1091,12 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2108000255}
     - target: {fileID: 2461359665756353334, guid: e196c46cdf7d7c04ba01e9e50bccb76a, type: 3}
-      propertyPath: cinemachineCam
-      value: 
-      objectReference: {fileID: 1745594919}
-    - target: {fileID: 2461359665756353334, guid: e196c46cdf7d7c04ba01e9e50bccb76a, type: 3}
       propertyPath: obstacleFollow
       value: 
       objectReference: {fileID: 1458532000}
-    - target: {fileID: 4422674927797490450, guid: e196c46cdf7d7c04ba01e9e50bccb76a, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 1.5902286
-      objectReference: {fileID: 0}
-    - target: {fileID: 4422674927797490450, guid: e196c46cdf7d7c04ba01e9e50bccb76a, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 3.170001
-      objectReference: {fileID: 0}
-    - target: {fileID: 4422674927797490450, guid: e196c46cdf7d7c04ba01e9e50bccb76a, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -4.251808
-      objectReference: {fileID: 0}
-    - target: {fileID: 6766527000665582937, guid: e196c46cdf7d7c04ba01e9e50bccb76a, type: 3}
-      propertyPath: field of view
-      value: 60
-      objectReference: {fileID: 0}
-    - target: {fileID: 7419961133820968693, guid: e196c46cdf7d7c04ba01e9e50bccb76a, type: 3}
-      propertyPath: m_Antialiasing
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7419961133820968693, guid: e196c46cdf7d7c04ba01e9e50bccb76a, type: 3}
-      propertyPath: m_RenderPostProcessing
-      value: 1
+    - target: {fileID: 2461359665756353334, guid: e196c46cdf7d7c04ba01e9e50bccb76a, type: 3}
+      propertyPath: runShakeAmplitude
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7737149853093775179, guid: e196c46cdf7d7c04ba01e9e50bccb76a, type: 3}
       propertyPath: m_LocalPosition.x
