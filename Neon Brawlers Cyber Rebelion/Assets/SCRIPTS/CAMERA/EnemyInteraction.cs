@@ -10,6 +10,8 @@ public class EnemyInteraction : MonoBehaviour
 
     ThirdPersonCam cam;
     ObstacleInteraction obstacleInteraction;
+    // referencia al script de postFX
+    CameraPostFXController postFX;
 
     bool enemyInside;
 
@@ -17,6 +19,7 @@ public class EnemyInteraction : MonoBehaviour
     {
         cam = FindFirstObjectByType<ThirdPersonCam>();
         obstacleInteraction = GetComponent<ObstacleInteraction>();
+        postFX = FindFirstObjectByType<CameraPostFXController>();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -46,6 +49,8 @@ public class EnemyInteraction : MonoBehaviour
         if (cam == null || enemyLookAt == null) return;
 
         cam.SetCustomFollow(enemyLookAt, enemyFOV);
+
+        postFX?.StartEnemyFX();
     }
 
     public void ExitEnemyMode()
@@ -54,6 +59,8 @@ public class EnemyInteraction : MonoBehaviour
         if (!obstacleInteraction.PlayerInObstacle) return;
 
         cam.ReturnToObstacleFollow();
+
+        postFX?.StopEnemyFX();
     }
 
     // llamado desde ObstacleInteraction si el jugador se va

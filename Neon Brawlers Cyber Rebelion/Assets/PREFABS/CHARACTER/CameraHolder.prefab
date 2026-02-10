@@ -1,5 +1,54 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &779244417177345399
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8712833308161387646}
+  - component: {fileID: 4110161278266748884}
+  m_Layer: 0
+  m_Name: Global Volume
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8712833308161387646
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 779244417177345399}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.21464539, y: -0.14553154, z: -0.90397644}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7737149853093775179}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4110161278266748884
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 779244417177345399}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.Volume
+  m_IsGlobal: 1
+  priority: 0
+  blendDistance: 0
+  weight: 1
+  sharedProfile: {fileID: 11400000, guid: 5c3fba65f9847ac47a99403766a713f8, type: 2}
 --- !u!1 &912287109257825226
 GameObject:
   m_ObjectHideFlags: 0
@@ -14,6 +63,7 @@ GameObject:
   - component: {fileID: 7419961133820968693}
   - component: {fileID: 3091521186722051593}
   - component: {fileID: 2461359665756353334}
+  - component: {fileID: 6483263238778204045}
   m_Layer: 0
   m_Name: MainCamera
   m_TagString: Untagged
@@ -30,7 +80,7 @@ Transform:
   m_GameObject: {fileID: 912287109257825226}
   serializedVersion: 2
   m_LocalRotation: {x: 0.25340134, y: 0.00000007945559, z: -0.00000002081348, w: 0.9673613}
-  m_LocalPosition: {x: 4.53337, y: 2.3237, z: 67.06004}
+  m_LocalPosition: {x: 1.5902286, y: 3.170001, z: -4.251808}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -69,7 +119,7 @@ Camera:
     height: 1
   near clip plane: 0.1
   far clip plane: 5000
-  field of view: 49.99998
+  field of view: 60
   orthographic: 0
   orthographic size: 10
   m_Depth: 0
@@ -118,8 +168,8 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
-  m_Antialiasing: 0
+  m_RenderPostProcessing: 1
+  m_Antialiasing: 1
   m_AntialiasingQuality: 2
   m_StopNaN: 0
   m_Dithering: 0
@@ -190,12 +240,28 @@ MonoBehaviour:
   normalFollow: {fileID: 0}
   zoomFollow: {fileID: 0}
   obstacleFollow: {fileID: 0}
-  cinemachineCam: {fileID: 0}
+  cinemachineCam: {fileID: 1088153594477705766}
   zoomFOV: 20
   normalFOV: 60
   runFOV: 90
   fovSpeed: 8
   rotationSpeed: 10
+--- !u!114 &6483263238778204045
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 912287109257825226}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a673dae98d4465643a721c6fe25efdd6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraPostFXController
+  globalVolume: {fileID: 4110161278266748884}
+  lensTargetHidden: 0.76
+  lensSpeed: 3
+  chromaSpeed: 2
 --- !u!1 &7169187624822612755
 GameObject:
   m_ObjectHideFlags: 0
@@ -226,7 +292,7 @@ Transform:
   m_GameObject: {fileID: 7169187624822612755}
   serializedVersion: 2
   m_LocalRotation: {x: 0.25340134, y: 0.0000000794556, z: -0.000000020813482, w: 0.9673613}
-  m_LocalPosition: {x: -0.01374, y: 3.2, z: -4.27163}
+  m_LocalPosition: {x: 1.5902286, y: 3.170001, z: -4.251808}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -256,7 +322,7 @@ MonoBehaviour:
     LookAtTarget: {fileID: 0}
     CustomLookAtTarget: 0
   Lens:
-    FieldOfView: 49.99998
+    FieldOfView: 60
     OrthographicSize: 10
     NearClipPlane: 0.1
     FarClipPlane: 5000
@@ -471,6 +537,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 8712833308161387646}
   - {fileID: 4422674927797490450}
   - {fileID: 2068088487169013839}
   m_Father: {fileID: 0}

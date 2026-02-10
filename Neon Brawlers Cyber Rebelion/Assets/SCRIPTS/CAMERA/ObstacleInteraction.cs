@@ -11,12 +11,15 @@ public class ObstacleInteraction : MonoBehaviour
 
     // variable para saber si el jugador esta o no
     public bool PlayerInObstacle { get; private set; }
+
     EnemyInteraction enemyInteraction;
+    CameraPostFXController postFX;
 
     // agarrar al script de enemyinteraction cuando inicia
     private void Awake()
     {
         enemyInteraction = GetComponent<EnemyInteraction>();
+        postFX = FindFirstObjectByType<CameraPostFXController>();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -57,6 +60,9 @@ public class ObstacleInteraction : MonoBehaviour
 
         player.EnterObstacleMode(snapPoint, snapSpeed);
         cam.EnterObstacleMode(obstacleLookAt);
+
+        // llama al script PostFX
+        postFX?.EnterObstacleFX();
     }
 
     void ExitObstacle(PlayerMovement player, ThirdPersonCam cam)
@@ -68,6 +74,10 @@ public class ObstacleInteraction : MonoBehaviour
 
         player.ExitObstacleMode();
         cam.ForceReturnToPlayer();
+
+        // tambien acaba todo postFX
+        postFX?.ExitObstacleFX();
+        postFX?.StopEnemyFX();
     }
 
 
