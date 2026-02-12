@@ -30,12 +30,12 @@ public class HabilidadesManager : MonoBehaviour
         if (Keyboard.current.digit2Key.wasPressedThisFrame)
         {
             selectedAbility = 1;
-            Debug.Log("Habilidad 2 seleccionada");
+            Debug.Log("Habilidad 2 seleccionada: Electromagnetic wave");
         }
         if (Keyboard.current.digit3Key.wasPressedThisFrame)
         {
             selectedAbility = 2;
-            Debug.Log("Habilidad 3 seleccionada");
+            Debug.Log("Habilidad 3 seleccionada: Telekinesis");
         }
 
         if (Keyboard.current.cKey.wasPressedThisFrame)
@@ -49,6 +49,11 @@ public class HabilidadesManager : MonoBehaviour
                 Debug.Log("Esta habilidad aun no esta desbloqueada");
             }
         }
+
+        if (Keyboard.current.cKey.wasReleasedThisFrame)
+        {
+            AbilityRelease();
+        }
     }
 
     void ExecuteAbility()
@@ -56,6 +61,7 @@ public class HabilidadesManager : MonoBehaviour
         switch (selectedAbility)
         {
             case 0:
+                GetComponent<SlowTime>()?.UseSlowTime();
                 Debug.Log("Se uso habilidad 1");
                 break;
             case 1:
@@ -63,10 +69,20 @@ public class HabilidadesManager : MonoBehaviour
                 Debug.Log("Se uso habilidad 2");
                 break;
             case 2:
+                GetComponent<Telekinesis>()?.StartTelekinesis();
                 Debug.Log("Se uso habilidad 3");
                 break;
         }
     }
+
+    void AbilityRelease()
+    {
+        if (selectedAbility == 2)
+        {
+            GetComponent<Telekinesis>()?.StopTelekinesis();
+        }
+    }
+
     //para desbloquear habilidades
     public void UnlockAbility(int abilityIndex)
     {

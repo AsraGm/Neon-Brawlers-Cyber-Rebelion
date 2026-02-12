@@ -102,14 +102,14 @@ public class ThirdPersonCam : MonoBehaviour
         // Si el input no es igual a cero, hace una cosa rara que no entendí pero funciona xd
         if (inputDir != Vector3.zero)
         {
-            playerObject.forward = Vector3.Slerp(playerObject.forward, inputDir.normalized, Time.deltaTime * rotationSpeed);
+            playerObject.forward = Vector3.Slerp(playerObject.forward, inputDir.normalized, Time.unscaledDeltaTime * rotationSpeed);
 
         }
 
         // FOV suave
         cinemachineCam.Lens.FieldOfView = Mathf.Lerp
         (
-            cinemachineCam.Lens.FieldOfView,targetFOV,Time.deltaTime * fovSpeed
+            cinemachineCam.Lens.FieldOfView,targetFOV,Time.unscaledDeltaTime * fovSpeed
         );
 
         HandleInspectionZoom();

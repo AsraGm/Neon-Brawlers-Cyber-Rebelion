@@ -34,10 +34,14 @@ public class EnemyPatrol : MonoBehaviour
     public bool alertedByDrone = false;
     public bool canAttack = true;
 
+    private bool isBeingManipulated = false;
+    private Rigidbody rb;
+
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         fieldOfView = GetComponent<FieldOfView>();
+        rb = GetComponent<Rigidbody>();
 
         if (agent != null)
         {
@@ -54,7 +58,7 @@ public class EnemyPatrol : MonoBehaviour
 
     void Update()
     {
-        if (isStunned) return;
+        if (isStunned || isBeingManipulated) return;
 
         CheckChaseRange();
 
@@ -185,6 +189,7 @@ public class EnemyPatrol : MonoBehaviour
         }
     }
 
+    #region AplicarStun
     public void ApplyStun(float duracion)
     {
         if (!isStunned)
@@ -232,6 +237,43 @@ public class EnemyPatrol : MonoBehaviour
             agent.isStopped = false;
         }
     }
+    #endregion AplicarStun
+
+    #region AplicarTelekinesis
+    public void OnTelekinesisGrab()
+    {
+        isBeingManipulated = true;
+
+        if (rb != null)
+        {
+            rb.useGravity = false;
+        }
+
+        if (agent != null)
+        {
+            agent.isStopped = true;
+            agent.velocity = Vector3.zero;
+        }
+
+        // Detener coroutines activas
+        if (idleCoroutine != null)
+        {
+            StopCoroutine(idleCoroutine);
+            idleCoroutine = null;
+            isWaiting = false;
+        }
+
+        // Detener ataque si existe
+        if (robotAttack != null)
+        {
+            robotAttack.StopRobotAttack();
+        }
+
+        Debug.Log("Enemigo agarrado por telekinesis");
+    }
+    #endregion AplicarTelekinesis
+
+    #region PararStun
     public void StopStun()
     {
         if (isStunned)
@@ -242,6 +284,43 @@ public class EnemyPatrol : MonoBehaviour
             StartChasing();
         }
     }
+    #endregion PararStun
+
+    #region PararTelekinesis
+    public void OnTelekinesisRelease()
+    {
+        StartCoroutine(ReleaseFromTelekinesis());
+    }
+
+    private IEnumerator ReleaseFromTelekinesis()
+    {
+        isBeingManipulated = false;
+
+        if (rb != null)
+        {
+            rb.useGravity = true;
+        }
+
+        //tiempo para que retome su camino
+        yield return new WaitForSeconds(3f);
+
+        if (agent != null)
+        {
+            agent.isStopped = false;
+            isChasing = false;
+            agent.speed = patrolSpeed;
+            agent.stoppingDistance = patrolStoppingDistance;
+            UpdateDestination();
+        }
+
+        if (robotAttack != null)
+        {
+            robotAttack.RobotCanAttack();
+        }
+
+        Debug.Log("Enemigo liberado de telekinesis");
+    }
+    #endregion PararTelekinesis
 
     private void OnDrawGizmos()
     {

@@ -136,7 +136,7 @@ public class PlayerMovement : MonoBehaviour
         rb.MovePosition(Vector3.Lerp(
             rb.position,
             targetPos,
-            Time.fixedDeltaTime * snapSpeed
+            Time.unscaledDeltaTime * snapSpeed
         ));
     }
 
